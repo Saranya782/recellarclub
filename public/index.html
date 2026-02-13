@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Domain Search - RecellarClub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Domain Availability Search</h1>
+    <p class="subtitle">Check if your desired domain name is available</p>
+
+    <div class="search-box">
+      <input
+        type="text"
+        id="domain-input"
+        placeholder="Enter domain name (e.g. mybusiness)"
+        autocomplete="off"
+      >
+      <button id="search-btn">Search</button>
+    </div>
+
+    <div id="loading" class="loading hidden">Checking availability...</div>
+    <div id="error" class="error hidden"></div>
+    <div id="results" class="results"></div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

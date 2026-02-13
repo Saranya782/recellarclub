@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: recellarclub
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: RC_USER_ID
+        sync: false
+      - key: RC_API_KEY
+        sync: false
