@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/api/check-domain", "destination": "/api/check-domain" }
+  ]
+}
