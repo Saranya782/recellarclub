@@ -30,8 +30,19 @@ app.get("/api/check-domain", async (req, res) => {
           "auth-userid": process.env.RC_USER_ID,
           "api-key": process.env.RC_API_KEY,
           "domain-name": domainName,
-          tlds: "com,net,org,in",
+          tlds: ["com", "net", "org", "in"],
           "suggest-alternative": "true",
+        },
+        paramsSerializer: (params) => {
+          const parts = [];
+          for (const [key, val] of Object.entries(params)) {
+            if (Array.isArray(val)) {
+              val.forEach((v) => parts.push(`${key}=${encodeURIComponent(v)}`));
+            } else {
+              parts.push(`${key}=${encodeURIComponent(val)}`);
+            }
+          }
+          return parts.join("&");
         },
         timeout: 15000,
       }
