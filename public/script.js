@@ -54,6 +54,8 @@ async function search() {
 function renderResults(data) {
   resultsEl.innerHTML = "";
 
+  // ResellerClub API returns: { "canva.com": { "status": "regthroughothers", ... }, ... }
+  // OR sometimes: { "canva.com": "available", ... }
   const entries = Object.entries(data);
   if (entries.length === 0) {
     showError("No results returned");
@@ -61,10 +63,12 @@ function renderResults(data) {
   }
 
   for (const [domain, info] of entries) {
-    const status = info.status || "unknown";
+    // info can be an object with .status or a plain string
+    const status = typeof info === "object" ? (info.status || "unknown") : String(info);
     const isAvailable = status === "available";
-    const label = isAvailable ? "Available" : status === "regthroughothers" ? "Taken" : status.charAt(0).toUpperCase() + status.slice(1);
-    const statusClass = isAvailable ? "available" : status === "regthroughothers" ? "taken" : "unknown";
+    const isTaken = status === "regthroughothers" || status === "regthroughus";
+    const label = isAvailable ? "Available" : isTaken ? "Taken" : status.charAt(0).toUpperCase() + status.slice(1);
+    const statusClass = isAvailable ? "available" : isTaken ? "taken" : "unknown";
 
     const item = document.createElement("div");
     item.className = "result-item";
