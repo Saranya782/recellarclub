@@ -37,21 +37,31 @@ app.get("/api/check-domain", async (req, res) => {
       }
     );
 
-    res.json(response.data);
-  } catch (error) {
-    console.error("Domain check failed:", error.message);
-
-    // Cloudflare block returns HTML — don't forward raw HTML to frontend
-    const status = error.response?.status;
-    if (status === 403) {
+    // Check if success response is actually HTML (Cloudflare block with 200 status)
+    const data = response.data;
+    if (typeof data === "string" && data.includes("<!DOCTYPE")) {
       return res.status(403).json({
-        error: "Access blocked by Cloudflare. Ensure your server IP is whitelisted in ResellerClub Settings → API.",
+        error: "Your server IP is blocked by Cloudflare. Whitelist it in ResellerClub Settings → API.",
       });
     }
 
+    res.json(data);
+  } catch (error) {
+    console.error("Domain check failed:", error.message);
+
     const errorData = error.response?.data;
+    const isHtml =
+      typeof errorData === "string" &&
+      (errorData.includes("<!DOCTYPE") || errorData.includes("<html"));
+
+    if (isHtml || error.response?.status === 403) {
+      return res.status(403).json({
+        error: "Your server IP is blocked by Cloudflare. Whitelist it in ResellerClub Settings → API.",
+      });
+    }
+
     const message =
-      typeof errorData === "string" && errorData.includes("<!DOCTYPE")
+      typeof errorData === "string"
         ? "Unexpected response from ResellerClub API"
         : errorData || "Failed to check domain availability";
 
